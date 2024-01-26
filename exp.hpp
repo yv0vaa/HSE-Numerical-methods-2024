@@ -2,10 +2,11 @@
 #define EXP_HPP
 
 #include <cfloat>
+#include <climits>
 #include <cmath>
 #include <type_traits>
 
-namespace ADAAI{
+namespace ADAAI {
 template <typename F> constexpr inline F Ln2;
 template <> constexpr inline float Ln2<float> = 1 / M_LOG2Ef;
 template <> constexpr inline double Ln2<double> = 1 / M_LOG2E;
@@ -23,21 +24,38 @@ template <> constexpr inline long double sqrt2<long double> = M_SQRT2l;
 
 template <typename F> constexpr F Exp(F x) {
     static_assert(std::is_floating_point_v<F>);
-    // e^x = 2^xlog_2e = 2^x/ln2 = 2^y
-    // std::modf y = y_0 + y_1
-    // y < 0 => y_0, y_1 < 0 => make |y_1| < 0.5
-    // int n = (int) y_0 BUT CHECK y_0 fits in to int
-
-    // y_0 < INT_MIN => return 0,0
-    // y_0 > INT_MAX => return +inf
-
-    // 2^y = 2^(n + y_1) = 2^n * 2^y1 = 2^n * e^y_1ln2
-    // absolute precision delta = 10.0 * Eps<F>
-    F delta = 10.0 * Eps<F>;
-    while (/* condition */) {
-        /* code */
+    F n;
+    F y = x / Ln2<F>;
+    y = std::modf(y, &n);
+    if (y > 0.5 || y < -0.5) {
+        if (y > 0) {
+            n += 1;
+            y = 1 - y;
+        } else {
+            n -= 1;
+            y++;
+        }
     }
+    if (n < INT_MIN) {
+        return 0.0;
+    }
+    if (n > INT_MAX) {
+        return 1 / 0.0;
+    }
+    n = (int)n;
+    F delta = 10.0 * Eps<F>;
+    F f1 = 1.0;
+    F x1 = y * Ln2<F>;
+    F cpy = x1;
+    F k = 1.0;
+    while (sqrt2<F> * x1 > delta) {
+        f1 += x1;
+        x1 *= cpy;
+        x1 /= k;
+        k += 1;
+    }
+    return std::ldexp(n, f1);
 }
-}  // namespace
+}  // namespace ADAAI
 
 #endif
