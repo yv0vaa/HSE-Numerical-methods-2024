@@ -3,6 +3,7 @@
 #include <cfloat>
 #include <climits>
 #include <cmath>
+
 namespace ADAAI {
 template <typename F> constexpr inline F Ln2;
 template <> constexpr inline float Ln2<float> = 1 / M_LOG2Ef;
