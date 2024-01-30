@@ -1,2 +1,6 @@
 *out
-.clang-format
+CMakeCache.txt
+CMakeFiles
+src/cmake_install.cmake
+src/Makefile
+src/exp
