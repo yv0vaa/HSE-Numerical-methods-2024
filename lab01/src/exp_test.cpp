@@ -1,4 +1,4 @@
-#include "exp.hpp"
+#include "../include/exp.hpp"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -9,11 +9,12 @@ const int FORMAT2 = 15;
 const int FORMAT3 = 16;
 const int FORMAT4 = 12;
 const int PRECISION = 10;
+long double MAX_DELTA = 0.0;
 
 template <typename F> void test_value(F x) {
     F expected = std::exp(x);
     F actual = ADAAI::Exp(x);
-    F delta = (expected > actual) ? expected - actual : actual - expected;
+    F delta = std::abs((x <= 0) ? actual - expected : actual / expected - 1.0);
     std::cout << " ";
     if (x > 0) {
         std::cout << " " << std::setw(FORMAT2 - 1) << std::left
@@ -24,9 +25,10 @@ template <typename F> void test_value(F x) {
     }
     std::cout << "| " << std::setw(FORMAT3) << std::left
               << std::setprecision(PRECISION) << expected << "| "
-              << std::setw(FORMAT4) << std::left << std::setprecision(PRECISION)
+              << std::setw(FORMAT3) << std::left << std::setprecision(PRECISION)
               << actual << "| " << std::setw(FORMAT4) << std::left
               << std::setprecision(PRECISION) << delta << "\n";
+    MAX_DELTA = std::max(MAX_DELTA, static_cast<long double>(delta));
 }
 
 // Program can be called without args, then 5 tests will be conducted,
@@ -56,7 +58,7 @@ int main(int argc, char **argv) {
     std::cout << std::setw(FORMAT1) << std::left << "    VALUE TYPE"
               << "|" << std::setw(FORMAT2 + 1) << "     VALUE"
               << "|" << std::setw(FORMAT3 + 1) << " EXPECTED RESULT"
-              << "|" << std::setw(FORMAT4 + 1) << " OUR RESULT"
+              << "|" << std::setw(FORMAT3 + 1) << " OUR RESULT"
               << "|" << std::setw(FORMAT4) << "    DELTA" << std::endl;
     for (int i = 0; i < FORMAT1 + FORMAT2 + FORMAT3 + 3 * FORMAT4; i++) {
         std::cout << "-";
@@ -86,5 +88,10 @@ int main(int argc, char **argv) {
                       << "|";
             test_value(static_cast<long double>(random_double));
         }
+        
     }
+    for (int i = 0; i < FORMAT1 + FORMAT2 + FORMAT3 + 3 * FORMAT4; i++) {
+        std::cout << "-";
+    }
+    std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 30) << MAX_DELTA << std::endl;
 }
