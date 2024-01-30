@@ -14,10 +14,10 @@ template <typename F> constexpr F Exp(F x) {
     if (y > 0.5 || y < -0.5) {
         if (y > 0) {
             n += 1;
-            y = 1 - y;
+            y-=1;
         } else {
             n -= 1;
-            y++;
+            y+=1;
         }
     }
     if (n < INT_MIN) {
@@ -28,11 +28,11 @@ template <typename F> constexpr F Exp(F x) {
     }
     F delta = 10.0 * Eps<F>, f1 = 1.0, x1 = y * Ln2<F>, k = 1.0;
     F cpy = x1;
-    while (sqrt2<F> * x1 > delta) {
+    while (sqrt2<F> * x1 > delta || -(sqrt2<F> * x1) > delta) {
         f1 += x1;
         x1 *= cpy;
-        x1 /= k;
         k += 1;
+        x1 /= k;
     }
     return std::ldexp(f1, static_cast<int> (n));
 }
