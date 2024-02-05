@@ -4,8 +4,10 @@
 #include <iostream>
 #include <random>
 
+int N_FLOAT = MkExpTaylorOrder<float>();
+
 const int FORMAT1 = 18;
-const int FORMAT2 = 15;
+const int FORMAT2 = 16;
 const int FORMAT3 = 16;
 const int FORMAT4 = 12;
 const int PRECISION = 10;
@@ -26,8 +28,8 @@ template <typename F> void test_value(F x) {
     std::cout << "| " << std::setw(FORMAT3) << std::left
               << std::setprecision(PRECISION) << expected << "| "
               << std::setw(FORMAT3) << std::left << std::setprecision(PRECISION)
-              << actual << "| " << std::setw(FORMAT4) << std::left
-              << std::setprecision(PRECISION) << delta << " (" << 
+              << actual << "| " << std::setw(FORMAT4 + 3) << std::left
+              << std::setprecision(PRECISION) << delta << " ("
               << DBL_EPSILON << ")\n";
     MAX_DELTA = std::max(MAX_DELTA, static_cast<long double>(delta));
 }
@@ -95,4 +97,5 @@ int main(int argc, char **argv) {
         std::cout << "-";
     }
     std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
+    std::cout << N_FLOAT << "\n";
 }
