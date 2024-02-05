@@ -4,7 +4,9 @@
 #include <iostream>
 #include <random>
 
-int N_FLOAT = MkExpTaylorOrder<float>();
+int N_FLOAT = ADAAI::MkExpTaylorOrder<float>();
+int N_DOUBLE = ADAAI::MkExpTaylorOrder<double>();
+int N_LONG_DOUBLE = ADAAI::MkExpTaylorOrder<long double>();
 
 const int FORMAT1 = 18;
 const int FORMAT2 = 16;
@@ -97,5 +99,7 @@ int main(int argc, char **argv) {
         std::cout << "-";
     }
     std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
-    std::cout << N_FLOAT << "\n";
+    std::cout << "PRECOMPUTED N FOR <float> IN TAYLOR = " << N_FLOAT << "\n" 
+    << "PRECOMPUTED N FOR <double> IN TAYLOR = " << N_DOUBLE << "\n" 
+    << "PRECOMPUTED N FOR <long double> IN TAYLOR = " << N_LONG_DOUBLE << "\n";
 }
