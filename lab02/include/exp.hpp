@@ -58,29 +58,26 @@ constexpr F Exp(F x) {
         if constexpr (std::is_same_v<float, F>) {
             F a[] = {1.0, 0.5, 3.0 / 28.0, 1.0 / 84.0, 1.0 / 1680.0};
             for (int i = 4; i >= 0; i--) {
-                numerator += a[i];
                 numerator *= x1;
-                denominator += (i % 2 == 0 ? a[i] : -a[i]);
+                numerator += a[i];
                 denominator *= x1;
-
+                denominator += (i % 2 == 0 ? a[i] : -a[i]);
             }
         } else if constexpr (std::is_same_v<double, F>) {
             F a[] = {1.0, 0.5, 3.0 / 26.0, 5.0 / 312.0, 5.0 / 3432.0, 1.0 / 11440., 1.0 / 308880.0, 1.0 / 17297280.0};
             for (int i = 7; i >= 0; i--) {
-                numerator += a[i];
                 numerator *= x1;
-                denominator += (i % 2 == 0 ? a[i] : -a[i]);
+                numerator += a[i];
                 denominator *= x1;
-
+                denominator += (i % 2 == 0 ? a[i] : -a[i]);
             }
         } else {
             F a[] = {1.0, 0.5, 7.0 / 60.0, 1.0 / 60.0, 1.0 / 624.0, 1.0 / 9360.0, 1.0 / 205920.0, 1.0 / 7207200.0, 1.0 / 518918400.0};
             for (int i = 8; i >= 0; i--) {
-                numerator += a[i];
                 numerator *= x1;
-                denominator += (i % 2 == 0 ? a[i] : -a[i]);
+                numerator += a[i];
                 denominator *= x1;
-
+                denominator += (i % 2 == 0 ? a[i] : -a[i]);
             }
         }
         return std::ldexp(numerator / denominator, static_cast<int>(n));
