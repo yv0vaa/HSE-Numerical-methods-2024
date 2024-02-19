@@ -64,7 +64,7 @@ constexpr F Exp(F x) {
             a[2] = 7.0 / 60.0, a[3] = 1.0 / 60.0, a[4] = 1.0 / 624.0, a[5] = 1.0 / 9360.0, a[6] = 1.0 / 205920.0, a[7] = 1.0 / 7207200.0, a[8] = 1.0 / 518918400.0;
             n = 8;
         }
-        for (int i = n; i >= 1; i--) {
+        for (int i = n; i >= 0; i--) {
             numerator *= x1;
             numerator += a[i];
             denominator *= x1;
