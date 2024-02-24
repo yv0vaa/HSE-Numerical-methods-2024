@@ -1,4 +1,5 @@
 #include "../include/exp.hpp"
+#include "../include/consts.hpp"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -10,9 +11,11 @@ const int FORMAT3 = 16;
 const int FORMAT4 = 12;
 const int PRECISION = 10;
 long double MAX_DELTA = 0.0;
-long double MAX_ERROR_VALUE = 0.0;
+long double MAX_DELTA_VALUE = 0.0;
+int MAX_DELTA_TYPE = 0;
+long double MAX_DELTA_EPS = 0.0;
 
-template <typename F> void test_value(F x) {
+template <typename F> void test_value(F x, int value_type) {
     F expected = std::exp(x);
     F actual = ADAAI::Exp(x);
     F delta = std::abs((x <= 0) ? actual - expected : actual / expected - 1.0);
@@ -30,9 +33,24 @@ template <typename F> void test_value(F x) {
               << actual << "| " << std::setw(FORMAT4) << std::left
               << std::setprecision(PRECISION) << delta << " (" 
               << DBL_EPSILON << ")\n";
-    if (MAX_DELTA < static_cast<long double>(delta)) {
+    long double eps_delta = 0.0; 
+    // if (value_type == 2) return;
+    switch (value_type) {
+        case 0:
+            eps_delta = delta / FLT_EPSILON;
+            break;
+        case 1:
+            eps_delta = delta / DBL_EPSILON;
+            break;
+        case 2:
+            eps_delta = delta / LDBL_EPSILON;
+            break;            
+    }
+    if (MAX_DELTA_EPS < static_cast<long double>(eps_delta)) {
         MAX_DELTA = static_cast<long double>(delta);
-        MAX_ERROR_VALUE = static_cast<long double>(x);
+        MAX_DELTA_EPS = static_cast<long double>(eps_delta);
+        MAX_DELTA_VALUE = static_cast<long double>(x);
+        MAX_DELTA_TYPE = value_type;
     }
 }
 
@@ -81,23 +99,35 @@ int main(int argc, char **argv) {
         case 0:
             std::cout << std::setw(FORMAT1) << std::left << "FLOAT VALUE"
                       << "|";
-            test_value(static_cast<float>(random_double));
+            test_value(static_cast<float>(random_double), arg_type);
             break;
         case 1:
             std::cout << std::setw(FORMAT1) << std::left << "DOUBLE VALUE"
                       << "|";
-            test_value(static_cast<double>(random_double));
+            test_value(static_cast<double>(random_double), arg_type);
             break;
         case 2:
             std::cout << std::setw(FORMAT1) << std::left << "LONG DOUBLE VALUE"
                       << "|";
-            test_value(static_cast<long double>(random_double));
+            test_value(static_cast<long double>(random_double), arg_type);
         }
         
     }
     for (int i = 0; i < FORMAT1 + FORMAT2 + FORMAT3 + 3 * FORMAT4; i++) {
         std::cout << "-";
     }
-    std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
-    std::cout << "WITH VALUE: " << std::setprecision(PRECISION + 10) << MAX_ERROR_VALUE << std::endl;
+    std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA_EPS << " epsilon OR " 
+              << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
+    std::cout << "WITH VALUE: " << std::setprecision(PRECISION + 10) << MAX_DELTA_VALUE << " OF TYPE ";
+    switch (MAX_DELTA_TYPE) {
+        case 0:
+            std::cout << "<float>\n";
+            break;
+        case 1:
+            std::cout << "<double>\n";
+            break;
+        case 2:
+            std::cout << "<long double>\n";
+            break;            
+    }
 }
