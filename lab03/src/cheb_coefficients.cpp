@@ -2,7 +2,7 @@
 #include <iostream>
 #include <gsl/gsl_linalg.h>
 
-enum {N = 100};
+enum {N = 11};
 
 long long a_nk(long long n, long long k) {
 	if (n % 2 == 0) {

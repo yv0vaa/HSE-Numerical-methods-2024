@@ -10,6 +10,7 @@ const int FORMAT3 = 16;
 const int FORMAT4 = 12;
 const int PRECISION = 10;
 long double MAX_DELTA = 0.0;
+long double MAX_ERROR_VALUE = 0.0;
 
 template <typename F> void test_value(F x) {
     F expected = std::exp(x);
@@ -29,7 +30,10 @@ template <typename F> void test_value(F x) {
               << actual << "| " << std::setw(FORMAT4) << std::left
               << std::setprecision(PRECISION) << delta << " (" 
               << DBL_EPSILON << ")\n";
-    MAX_DELTA = std::max(MAX_DELTA, static_cast<long double>(delta));
+    if (MAX_DELTA < static_cast<long double>(delta)) {
+        MAX_DELTA = static_cast<long double>(delta);
+        MAX_ERROR_VALUE = static_cast<long double>(x);
+    }
 }
 
 // Program can be called without args, then 5 tests will be conducted,
@@ -70,7 +74,7 @@ int main(int argc, char **argv) {
         random_double1 = unif(rng);
         random_double2 = unif(rng);
         // Calculate value for testing
-        long double random_double = random_double1 / random_double2;
+        long double random_double = (random_double1 / random_double2);
         // Determine value type
         arg_type = gen(rng);
         switch (arg_type) {
@@ -95,4 +99,5 @@ int main(int argc, char **argv) {
         std::cout << "-";
     }
     std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
+    std::cout << "WITH VALUE: " << std::setprecision(PRECISION + 10) << MAX_ERROR_VALUE << std::endl;
 }
