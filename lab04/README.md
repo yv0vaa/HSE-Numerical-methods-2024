@@ -1,0 +1,1 @@
+## Calculating $a_k$ analytically:
