@@ -2,12 +2,12 @@
 #include <iostream>
 #include <gsl/gsl_linalg.h>
 
-enum {N = 11};
+enum {N = 20};
 
 long long a_nk(long long n, long long k) {
 	if (n % 2 == 0) {
 		if (k % 2 == 0) return 0;
-		if (k == 1) return n;
+		if (k == 1) return 2 * n;
 		return 2 * n;
 	}
 	else {
