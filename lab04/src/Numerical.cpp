@@ -1,9 +1,4 @@
-#include <cmath>
-#include <math.h>
-#include <numbers>
-#include <iomanip>
-#include <iostream>
-#include <string>
+#include "../include/Numerical.hpp"
 
 long double T_k(long double x, int k) {
 	long double t_0 = 1.0, t_1 = x;

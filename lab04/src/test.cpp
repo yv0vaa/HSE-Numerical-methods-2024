@@ -2,8 +2,7 @@
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_math.h>
 #include <numbers>
-
-long double Exp(long double x, int N, bool use_numerical_a_k);
+#include "../include/Exp.hpp"
 
 double integrand(double x, void *params) {
     int N = *(int *)params;
