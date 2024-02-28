@@ -1,6 +1,6 @@
 #include "../include/Numerical.hpp"
 
-long double T_k(long double x, int k) {
+static long double T_k(long double x, int k) {
 	long double t_0 = 1.0, t_1 = x;
 	for (int i = 2; i <= k; i++) {
 		long double cur = 2 * x * t_1 - t_0;
@@ -10,7 +10,7 @@ long double T_k(long double x, int k) {
 	return k == 0 ? t_0 : t_1;
 }
 
-long double no_cos_x_i(int i, int N) {
+static long double no_cos_x_i(int i, int N) {
     return ((2 * i - 1) * std::numbers::pi_v<long double>) / (2 * (N + 1));;
 }
 
