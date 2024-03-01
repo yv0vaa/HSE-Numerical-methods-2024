@@ -1,5 +1,7 @@
 #include <cmath>
 #include <numbers>
+#include <iostream>
+#include <gsl/gsl_fft_real.h>
 #include "Analytical.hpp"
 #include "Numerical.hpp"
 
