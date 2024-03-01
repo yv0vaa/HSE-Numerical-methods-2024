@@ -6,7 +6,7 @@
 
 double integrand(double x, void *params) {
     int N = *(int *)params;
-    double fx = static_cast<double>(Exp(static_cast<long double>(x), N, false));
+    double fx = static_cast<double>(Exp_FFT(static_cast<long double>(x), N, false));
     double gx = std::exp(x);
     return pow(fabs(fx - gx),  2);
 }
