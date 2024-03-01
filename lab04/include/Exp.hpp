@@ -14,7 +14,7 @@ F Exp(F x, int N, bool use_numerical_a_k) {
 }
 
 template <typename F> 
-F Exp_FFT(F x, int N, bool use_numerical_a_k) {
+F Exp_FFT(F gx,F x, int N, bool use_numerical_a_k) {
     F sum = use_numerical_a_k ? numerical_a_k(0, N) / 2 : analytical_a_k(0) / 2;
     double data[N];
     if (use_numerical_a_k) {
@@ -33,14 +33,25 @@ F Exp_FFT(F x, int N, bool use_numerical_a_k) {
     real = gsl_fft_real_wavetable_alloc(N);
     gsl_fft_real_transform(data, 1, N, real, work);
     gsl_fft_real_wavetable_free(real);
-    F minnimal_difference = 1000.0;
-    int ind_of_minimal_difference = 0;
     for (int i = 0; i < N; i++) {
-        if (abs(data[i] - x) < minnimal_difference) {
+        data[i] += sum;
+    }
+    F minimal_difference = 1000.0;
+    int ind_of_minimal_difference = 0;
+
+    for (int i = 0; i < N; i++) {
+        if (abs(data[i] - gx) < minimal_difference) {
             ind_of_minimal_difference = i;
-            minnimal_difference = abs(data[i] - x);
+            minimal_difference = abs(data[i] - gx);
         }
     }
+    int ind = floor(x * (N + 1) / M_PI / 2);
+    std::cout << "----------------" << std::endl;
+    std::cout << minimal_difference << std::endl;
+    std::cout << abs(data[ind]-x) << std::endl;
+    std::cout << ind_of_minimal_difference << std::endl;
+    std::cout << ind << std::endl;
+    
     return data[ind_of_minimal_difference];
 }
 
