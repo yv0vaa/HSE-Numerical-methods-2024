@@ -1,21 +1,21 @@
 #include "../include/exp.hpp"
+#include "../include/consts.hpp"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <random>
 
-int N_FLOAT = ADAAI::MkExpTaylorOrder<float>();
-int N_DOUBLE = ADAAI::MkExpTaylorOrder<double>();
-int N_LONG_DOUBLE = ADAAI::MkExpTaylorOrder<long double>();
-
 const int FORMAT1 = 18;
-const int FORMAT2 = 16;
+const int FORMAT2 = 15;
 const int FORMAT3 = 16;
 const int FORMAT4 = 12;
 const int PRECISION = 10;
 long double MAX_DELTA = 0.0;
+long double MAX_DELTA_VALUE = 0.0;
+int MAX_DELTA_TYPE = 0;
+long double MAX_DELTA_EPS = 0.0;
 
-template <typename F> void test_value(F x) {
+template <typename F> void test_value(F x, int value_type) {
     F expected = std::exp(x);
     F actual = ADAAI::Exp(x);
     F delta = std::abs((x <= 0) ? actual - expected : actual / expected - 1.0);
@@ -30,10 +30,28 @@ template <typename F> void test_value(F x) {
     std::cout << "| " << std::setw(FORMAT3) << std::left
               << std::setprecision(PRECISION) << expected << "| "
               << std::setw(FORMAT3) << std::left << std::setprecision(PRECISION)
-              << actual << "| " << std::setw(FORMAT4 + 3) << std::left
-              << std::setprecision(PRECISION) << delta << " ("
+              << actual << "| " << std::setw(FORMAT4) << std::left
+              << std::setprecision(PRECISION) << delta << " (" 
               << DBL_EPSILON << ")\n";
-    MAX_DELTA = std::max(MAX_DELTA, static_cast<long double>(delta));
+    long double eps_delta = 0.0; 
+    // if (value_type == 2) return;
+    switch (value_type) {
+        case 0:
+            eps_delta = delta / FLT_EPSILON;
+            break;
+        case 1:
+            eps_delta = delta / DBL_EPSILON;
+            break;
+        case 2:
+            eps_delta = delta / LDBL_EPSILON;
+            break;            
+    }
+    if (MAX_DELTA_EPS < static_cast<long double>(eps_delta)) {
+        MAX_DELTA = static_cast<long double>(delta);
+        MAX_DELTA_EPS = static_cast<long double>(eps_delta);
+        MAX_DELTA_VALUE = static_cast<long double>(x);
+        MAX_DELTA_TYPE = value_type;
+    }
 }
 
 // Program can be called without args, then 5 tests will be conducted,
@@ -74,32 +92,42 @@ int main(int argc, char **argv) {
         random_double1 = unif(rng);
         random_double2 = unif(rng);
         // Calculate value for testing
-        long double random_double = random_double1 / random_double2;
+        long double random_double = (random_double1 / random_double2);
         // Determine value type
         arg_type = gen(rng);
         switch (arg_type) {
         case 0:
             std::cout << std::setw(FORMAT1) << std::left << "FLOAT VALUE"
                       << "|";
-            test_value(static_cast<float>(random_double));
+            test_value(static_cast<float>(random_double), arg_type);
             break;
         case 1:
             std::cout << std::setw(FORMAT1) << std::left << "DOUBLE VALUE"
                       << "|";
-            test_value(static_cast<double>(random_double));
+            test_value(static_cast<double>(random_double), arg_type);
             break;
         case 2:
             std::cout << std::setw(FORMAT1) << std::left << "LONG DOUBLE VALUE"
                       << "|";
-            test_value(static_cast<long double>(random_double));
+            test_value(static_cast<long double>(random_double), arg_type);
         }
         
     }
     for (int i = 0; i < FORMAT1 + FORMAT2 + FORMAT3 + 3 * FORMAT4; i++) {
         std::cout << "-";
     }
-    std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
-    std::cout << "PRECOMPUTED N FOR <float> IN TAYLOR = " << N_FLOAT << "\n" 
-    << "PRECOMPUTED N FOR <double> IN TAYLOR = " << N_DOUBLE << "\n" 
-    << "PRECOMPUTED N FOR <long double> IN TAYLOR = " << N_LONG_DOUBLE << "\n";
+    std::cout << "\nMAX DELTA: " << std::setprecision(PRECISION + 10) << MAX_DELTA_EPS << " epsilon OR " 
+              << std::setprecision(PRECISION + 10) << MAX_DELTA << std::endl;
+    std::cout << "WITH VALUE: " << std::setprecision(PRECISION + 10) << MAX_DELTA_VALUE << " OF TYPE ";
+    switch (MAX_DELTA_TYPE) {
+        case 0:
+            std::cout << "<float>\n";
+            break;
+        case 1:
+            std::cout << "<double>\n";
+            break;
+        case 2:
+            std::cout << "<long double>\n";
+            break;            
+    }
 }

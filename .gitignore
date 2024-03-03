@@ -1,8 +1,2 @@
-*out
-CMakeCache.txt
-CMakeFiles
-lab01/cmake_install.cmake
-lab01/Makefile
-lab01/exp
-lab01/.vscode/
-lab01/src/exp_test
+.vscode/
+main
