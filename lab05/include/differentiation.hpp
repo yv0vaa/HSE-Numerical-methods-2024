@@ -264,23 +264,23 @@ double Differentiator(Callable const &F, double x, double y) {
         }
         return res;
     } else if constexpr(M == DiffMethod::FwdAAD) {
-        AAD22 AAD22_res = F(x,y);
+        AAD22 AAD22_res = F(AAD22::X(x),AAD22::Y(y));
         double res = 0;
         switch (w) {
         case WhichD::X:
-            res = AAD22_res.d_x;
+            res = AAD22_res.d_x();
             break;
         case WhichD::Y:
-            res = AAD22_res.d_y;
+            res = AAD22_res.d_y();
             break;
         case WhichD::XX:
-            res = AAD22_res.d_xx;
+            res = AAD22_res.d_xx();
             break;
         case WhichD::YY:
-            res = AAD22_res.d_xy;
+            res = AAD22_res.d_yy();
             break;
         case WhichD::XY:
-            res = AAD22_res.d_yy;
+            res = AAD22_res.d_xy();
             break;
         }
         return res;

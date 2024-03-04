@@ -37,12 +37,12 @@ public:
 
     // Operators overloading
 
-    AAD22 &operator+() const {
+    AAD22 operator+() const {
         AAD22 res = *this;
         return res;
     }
 
-    AAD22 &operator-() const {
+    AAD22 operator-() const {
         AAD22 res(0);
 
         res.val = -(this->val);
