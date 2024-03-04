@@ -1,7 +1,6 @@
 #include "differentiation.hpp"
 #include <iostream>
 #include <cstdio>
-#include <cmath>
 
 //for now some random stuff, Not sure if this file is needed at all :)
 double func(double x, double y) {
