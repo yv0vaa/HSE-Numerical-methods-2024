@@ -44,7 +44,7 @@ double Differentiator(Callable const &F, double x, double y) {
             if (abs(x) > 1) {
                 hx *= abs(x);
             }
-            return (F(x + hx, y + h) - F(x - hx, x + h) - F(x + hx, x - h) +
+            return (F(x + hx, y + h) - F(x - hx, y + h) - F(x + hx, y - h) +
                     F(x - hx, y - h)) /
                    (4 * hx * h);
         }
@@ -75,29 +75,23 @@ double Differentiator(Callable const &F, double x, double y) {
                         (1 - n)) /
                    (h * (1 - n));
         case WhichD::XX:
-            return 2 *
-                   (n * n * n * F(x + (h / n), y + (h / n)) - F(x + h, y + h) -
-                    h * (n * n - 1) *
+            return 2 * ((h * h * h * F(x + h / n, y + h / n) - F(x + h, y + h) -
+                    (n * n * n - 1) * F(x, y) -
+                    (n * n - 1) * h *
                         (Differentiator<WhichD::X, DiffMethod::Stencil3>(F, x,
                                                                          y) +
                          Differentiator<WhichD::Y, DiffMethod::Stencil3>(F, x,
-                                                                         y)) /
-                        (h * h * (n - 1)) -
-                    Differentiator<WhichD::XY, DiffMethod::Stencil3>(F, x, y) -
-                    Differentiator<WhichD::YY, DiffMethod::Stencil3>(F, x, y) /
-                        2);
-        case WhichD::YY:
-            return 2 *
-                   (n * n * n * F(x + (h / n), y + (h / n)) - F(x + h, y + h) -
-                    h * (n * n - 1) *
+                                                                         y))) /
+                       ((n - 1) * h * h) - Differentiator<WhichD::XY, DiffMethod::Stencil3>(F, x, y) - Differentiator<WhichD::YY, DiffMethod::Stencil3>(F, x, y) / 2);  
+        case WhichD::YY: 
+            return 2 * ((h * h * h * F(x + h / n, y + h / n) - F(x + h, y + h) -
+                    (n * n * n - 1) * F(x, y) -
+                    (n * n - 1) * h *
                         (Differentiator<WhichD::X, DiffMethod::Stencil3>(F, x,
                                                                          y) +
                          Differentiator<WhichD::Y, DiffMethod::Stencil3>(F, x,
-                                                                         y)) /
-                        (h * h * (n - 1)) -
-                    Differentiator<WhichD::XY, DiffMethod::Stencil3>(F, x, y) -
-                    Differentiator<WhichD::XX, DiffMethod::Stencil3>(F, x, y) /
-                        2);
+                                                                         y))) /
+                       ((n - 1) * h * h) - Differentiator<WhichD::XY, DiffMethod::Stencil3>(F, x, y) - Differentiator<WhichD::XX, DiffMethod::Stencil3>(F, x, y) / 2); 
         case WhichD::XY:
             return n * n * n * F(x + (h / n), y + (h / n)) - F(x + h, y + h) -
                    h * (n * n - 1) *

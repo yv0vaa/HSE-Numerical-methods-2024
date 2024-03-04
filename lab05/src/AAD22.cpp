@@ -1,34 +1,7 @@
 #include "../include/AAD22.hpp"
 
-double AAD22::value() const {
-    return val;
-}
-
-double AAD22::d_x() const {
-    return d1[0];
-}
-
-double AAD22::d_y() const {
-    return d1[2];
-}
-
-double AAD22::d_xx() const {
-    return d2[0];
-}
-
-double AAD22::d_yy() const {
-    return d2[1];
-}
-
-double AAD22::d_xy() const {
-    return d2[2];
-}
-
-// Operators overloading
-
 AAD22 AAD22::operator+() const {
-    AAD22 res = *this;
-    return res;
+    return *this;
 }
 
 AAD22 AAD22::operator-() const {
@@ -82,7 +55,6 @@ AAD22 &AAD22::operator*=(const AAD22 &g) {
 
 AAD22 &AAD22::operator/=(const AAD22 &g) {
     AAD22 f = *this;
-
     this->val = f.val / g.val;
 
     this->d1[0] = (f.d1[0] * g.val - f.val * g.d1[0]) / pow(g.val, 2);
@@ -98,7 +70,6 @@ AAD22 &AAD22::operator/=(const AAD22 &g) {
         (-g.val * (f.d1[0] * g.d1[1] + f.d1[1] * g.d1[0] + f.val * g.d2[2]) +
          f.d2[2] * pow(g.val, 2) + 2.0 * f.val * g.d1[0] * g.d1[1]) /
         pow(g.val, 3);
-
     return *this;
 }
 
@@ -122,16 +93,14 @@ AAD22 sin(const AAD22 &f) {
     AAD22 res = AAD22(0);
     double sin_val = std::sin(f.val);
     double cos_val = std::cos(f.val);
-
     res.val = sin_val;
 
     res.d1[0] = cos_val * f.d1[0];
-    res.d2[1] = cos_val * f.d1[1];
+    res.d1[1] = cos_val * f.d1[1];
 
     res.d2[0] = cos_val * f.d2[0] - sin_val * pow(f.d1[0], 2);
     res.d2[1] = cos_val * f.d2[1] - sin_val * pow(f.d1[1], 2);
     res.d2[2] = cos_val * f.d2[2] - sin_val * f.d1[0] * f.d1[1];
-
     return res;
 }
 
@@ -143,7 +112,7 @@ AAD22 cos(const AAD22 &f) {
     res.val = cos_val;
 
     res.d1[0] = -sin_val * f.d1[0];
-    res.d2[1] = -sin_val * f.d1[1];
+    res.d1[1] = -sin_val * f.d1[1];
 
     res.d2[0] = -sin_val * f.d2[0] - cos_val * pow(f.d1[0], 2);
     res.d2[1] = -sin_val * f.d2[1] - cos_val * pow(f.d1[1], 2);

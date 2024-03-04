@@ -1,6 +1,7 @@
 #ifndef AAD22_HPP
 #define AAD22_HPP
 #include <cmath>
+#include <iostream>
 
 class AAD22 {
   private:
@@ -12,6 +13,13 @@ class AAD22 {
     AAD22() = delete;
     constexpr AAD22(double c) : val(c), d1{0, 0}, d2{0, 0, 0} {};
 
+    // FOR TESTING PURPOSES
+    friend std::ostream &operator<<(std::ostream &out, const AAD22 &a) {
+        out << "{val=" << a.val << ", d1=[" << a.d1[0] << ", " << a.d1[1] 
+            << "], d2=[" << a.d2[0] << ", " << a.d2[1] << ", " << a.d2[2] << "]}";
+        return out;
+    }
+
   private:
     constexpr AAD22(int i, double v)
         :  // i = 0 for 'x', i = 1 for 'y'
@@ -19,18 +27,21 @@ class AAD22 {
                                                                      0} {};
 
   public:
-    double value() const;
-    double d_x() const;
-    double d_y() const;
-    double d_xx() const;
-    double d_yy() const;
-    double d_xy() const;
+    double value() const { return val; }
+    double d_x() const { return d1[0]; }
+    double d_y() const { return d1[1]; }
+    double d_xx() const { return d2[0]; }
+    double d_yy() const { return d2[1]; }
+    double d_xy() const { return d2[2]; }
 
-    constexpr static AAD22 X(double v) {
-        return AAD22(0, v);
+    // constexpr
+    static AAD22 X(double v) {
+        AAD22 X = AAD22(0, v);
+        // std::cout << "\ncreated x = " << X << "\n";
+        return X;
     }
-
-    constexpr static AAD22 Y(double v) {
+    // constexpr
+    static AAD22 Y(double v) {
         return AAD22(1, v);
     }
 
