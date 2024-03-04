@@ -1,5 +1,5 @@
 #include <cmath>
-
+#include "AAD22.hpp"
 enum class DiffMethod{
 	Stencil3,
 	Stencil3Extra,
@@ -264,27 +264,23 @@ double Differentiator(Callable const &F, double x, double y) {
         }
         return res;
     } else if constexpr(M == DiffMethod::FwdAAD) {
+        AAD22 AAD22_res = F(x,y);
         double res = 0;
         switch (w) {
         case WhichD::X:
-            // get m_d1[0]
-            res = 0;
+            res = AAD22_res.d_x;
             break;
         case WhichD::Y:
-            // get m_d1[1]
-            res = 0;
+            res = AAD22_res.d_y;
             break;
         case WhichD::XX:
-            // get m_d2[0]
-            res = 0;
+            res = AAD22_res.d_xx;
             break;
         case WhichD::YY:
-            // get m_d2[1]
-            res = 0;
+            res = AAD22_res.d_xy;
             break;
         case WhichD::XY:
-            // get m_d2[2]
-            res = 0;
+            res = AAD22_res.d_yy;
             break;
         }
         return res;
