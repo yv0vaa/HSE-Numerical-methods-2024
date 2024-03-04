@@ -1,3 +1,5 @@
+#include <cmath>
+
 enum class DiffMethod{
 	Stencil3,
 	Stencil3Extra,
