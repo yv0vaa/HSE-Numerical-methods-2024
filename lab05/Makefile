@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -std=c++20
 
 # Define the source files
-SRCS = src/test.cpp src/AAD22.cpp include/AAD22.hpp
+SRCS = src/test.cpp src/AAD22.cpp src/differentiation.cpp
 
 # Define the output file
 OUTPUT = test
