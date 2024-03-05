@@ -1,4 +1,4 @@
-#include "../include/differentiation.hpp"
+#include "../include/Differentiator.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>
