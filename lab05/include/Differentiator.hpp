@@ -137,7 +137,7 @@ double Differentiator(Callable const &F, double x, double y) {
                 double y_value = y + h * y_coeff;
                 d_coeffs[i] =
                     F(x - 2 * h, y_value) / 12 - 2 * F(x - h, y_value) / 3 +
-                    2 * F(x + h, y_value) / 3 - F(x - 2 * h, y_value) / 12;
+                    2 * F(x + h, y_value) / 3 - F(x + 2 * h, y_value) / 12;
                 d_coeffs[i] /= h;
             }
             res = d_coeffs[0] / 12 - 2 * d_coeffs[1] / 3 + 2 * d_coeffs[3] / 3 -
