@@ -9,63 +9,64 @@ using AADFuncPtr = AAD22(*)(AAD22, AAD22);
 
 void test_functions(DoubleFuncPtr f, AADFuncPtr F, double x, double y) {
     int width = 13;
+    int precision = 9;
     std::cout << "     " << "   stencil3   | stencil3Extra |    stencil5   | stencil5Extra |     FwdAAD\n";
     std::cout << "-----------------------------------------------------------------------------------\n";
 
-    std::cout << "dx:  " <<  std::setw(width)
+    std::cout << "dx:  " <<  std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::X, DiffMethod::Stencil3>(f, x, y) << " | " 
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::X, DiffMethod::Stencil3Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::X, DiffMethod::Stencil5>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::X, DiffMethod::Stencil5Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::X, DiffMethod::FwdAAD>(F, x, y) << "\n";
 
-    std::cout << "dy:  " << std::setw(width)
+    std::cout << "dy:  " << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::Y, DiffMethod::Stencil3>(f, x, y) << " | " 
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::Y, DiffMethod::Stencil3Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::Y, DiffMethod::Stencil5>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::Y, DiffMethod::Stencil5Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::Y, DiffMethod::FwdAAD>(F, x, y) << "\n";
 
-    std::cout << "dxx: " << std::setw(width)
+    std::cout << "dxx: " << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XX, DiffMethod::Stencil3>(f, x, y) << " | " 
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XX, DiffMethod::Stencil3Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XX, DiffMethod::Stencil5>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XX, DiffMethod::Stencil5Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XX, DiffMethod::FwdAAD>(F, x, y) << "\n";
 
-    std::cout << "dyy: " << std::setw(width)
+    std::cout << "dyy: " << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::YY, DiffMethod::Stencil3>(f, x, y) << " | " 
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::YY, DiffMethod::Stencil3Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::YY, DiffMethod::Stencil5>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::YY, DiffMethod::Stencil5Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::YY, DiffMethod::FwdAAD>(F, x, y) << "\n";
 
-    std::cout << "dxy: " << std::setw(width)
-    << std::setw(width)
+    std::cout << "dxy: " << std::setw(width) << std::setprecision(precision)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XY, DiffMethod::Stencil3>(f, x, y) << " | " 
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XY, DiffMethod::Stencil3Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XY, DiffMethod::Stencil5>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XY, DiffMethod::Stencil5Extra>(f, x, y) << " | "
-    << std::setw(width)
+    << std::setw(width) << std::setprecision(precision)
     << Differentiator<WhichD::XY, DiffMethod::FwdAAD>(F, x, y) << "\n";
 }
 
