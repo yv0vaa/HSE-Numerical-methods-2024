@@ -11,7 +11,7 @@ enum class DiffMethod {
     FwdAAD
 };
 
-const double H_CONST = 1e-5;
+const double H_CONST = 1e-4;
 
 enum class WhichD { X, Y, XY, XX, YY };
 
