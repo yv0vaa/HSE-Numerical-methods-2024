@@ -12,4 +12,5 @@ double CD::operator()(double M) const {
             return CD_i + (CD_i_1 - CD_i) * 20 * (M - M_i);
         }
     }
+    return -1.0; // should not be reached
 }

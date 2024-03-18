@@ -4,7 +4,6 @@
 #include <cmath>
 
 class CD {
-	// constexpr static double *M_i = {};
     constexpr static int arr_size = 37; // numers of reference points 
 	constexpr static double CD_val[] = { 
 		0.115,
