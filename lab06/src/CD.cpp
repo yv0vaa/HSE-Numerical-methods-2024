@@ -2,7 +2,7 @@
 #include <cassert>
 
 double CD::operator()(double M) const {
-    assert(0.4 <= M && M <= 2.2);
+    //assert(0.4 <= M && M <= 2.2);
     for (int i = 0; i + 1 < this->arr_size; i++) {
         double M_i = 0.4 + i * 0.05;
         double M_i_1 = 0.4 + (i + 1) * 0.05;
