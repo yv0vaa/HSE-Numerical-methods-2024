@@ -5,6 +5,8 @@
 
 class CD {
     constexpr static int arr_size = 37; // numers of reference points 
+	double a = 0.461; // coefficients for extrapolation a * M^-b for M > 2.2
+	double b = 0.667; // calculated from points (1.5, 0.35) and (2, 0.288)
 	constexpr static double CD_val[] = { 
 		0.115,
 		0.115,
