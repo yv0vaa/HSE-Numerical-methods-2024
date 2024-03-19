@@ -3,34 +3,35 @@
 #include "../include/CD.hpp"
 #define _USE_MATH_DEFINES
 #include <cmath>
-
 #include <iostream>
 
 constexpr static double m = 106;
-
 constexpr static double d = 0.216;
-
 constexpr static double pi = M_PI;
-
 constexpr static double g = 9.80655;   
 
 double *u_derivative(double *u) {
     Density density_instance;
     CD CD_instance;
+
+    double x = u[0];
+    double v_x = u[1];
     double y = u[2];
-    double S = pi * d * d / 4;
+    double v_y = u[3];
+
+    double S = pi * d * d / 4.0;
+
     static double ans_vector[4];
-    double V = u[1] * u[1] + u[3] * u[3];
-    V = sqrt(V);
-    double A = density_instance.pressure(y) / density_instance(y);
-    A = sqrt(A);
-    double M = V / A;
-    //std::cout << V << " " << A << " " << density_instance(y) << " " <<  density_instance.pressure(y) << "\n";
-    //if u want to test(assert in CD.cpp is hidden so everything can launch)
-    double Q = CD_instance(M) * density_instance(y) * V * V / 2 * S;
-    ans_vector[0] = u[1];  // V_x
-    ans_vector[2] = u[3];  // V_y
-    ans_vector[1] = -Q * (u[1] / V) / m;
-    ans_vector[3] = -Q * (u[3] / V) / m - g;
+
+    double v = sqrt(v_x * v_x + v_y * v_y);
+    double A = sqrt(density_instance.pressure(y) / density_instance(y));
+    double M = v / A;
+    std::cout << "M=" << M << "\n"; // What to do with such big M?
+
+    double Q = CD_instance(M) * density_instance(y) * v * v  * S / 2.0;
+    ans_vector[0] = v_x;  
+    ans_vector[1] = -Q * (v_x / v) / m;
+    ans_vector[2] = v_y;
+    ans_vector[3] = -(Q * (v_y / v) / m) - g;
     return ans_vector;
 }
