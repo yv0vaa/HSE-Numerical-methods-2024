@@ -8,7 +8,7 @@ template <typename Stepper, typename Observer> class ODE_Integrator {
     Observer const *const m_observer;
 
   public:
-    ODE_Integrator(Stpper *a_stepper, Observer const *a_observer)
+    ODE_Integrator(Stepper *a_stepper, Observer const *a_observer)
         : m_stepper(a_stepper), m_observer(a_observer){};
 
     void operator()(double a_t0, double a_y0[Stepper::N], double a_tEnd,
@@ -30,3 +30,4 @@ template <typename Stepper, typename Observer> class ODE_Integrator {
 };
 
 #endif
+
