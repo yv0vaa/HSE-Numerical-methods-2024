@@ -6,7 +6,7 @@ bool Observer::operator()(double a_curr_t, int a_n,
     switch (observe_method)
     {
         case ObserveMethod::ReturnCoordinates:
-            if (a_curr_y[2] > 0) {
+            if (a_curr_y[2] > 0 || a_curr_t == 0) {
                 std::cout << "t: " << a_curr_t << "\n";
                 std::cout << "x: " << a_curr_y[0] << "\n";
                 std::cout << "y: " << a_curr_y[2] << "\n";
@@ -17,10 +17,9 @@ bool Observer::operator()(double a_curr_t, int a_n,
             }
             break;
         case ObserveMethod::CheckMaxRange:
-            if (a_curr_y[2] > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return (a_curr_y[2] > 0 || a_curr_t == 0);
+        default:
+            std::cerr << "No specified observer\n";
+            return false;
     }
 }

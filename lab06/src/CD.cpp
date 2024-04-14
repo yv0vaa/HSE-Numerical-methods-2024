@@ -1,9 +1,11 @@
 #include "../include/CD.hpp"
 #include <cassert>
 #include <cmath>
+#include <iostream>
 
 double CD::operator()(double M) const {
-    assert(M >= 0.4);
+    // std::cout << "Calling CD with M=" << M << std::endl;
+    if (M < 0.4) return this->CD_val[0];
     if (M <= 2) {
         for (int i = 0; i + 1 < this->arr_size; i++) {
             double M_i = 0.4 + i * 0.05;
