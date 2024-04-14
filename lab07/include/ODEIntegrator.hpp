@@ -18,7 +18,7 @@ template <typename Stepper, typename Observer> class ODE_Integrator {
         while (current_t < a_tEnd) {
             // call stepper m_stepper
             bool should_continue = m_observer(current_t, Stepper::N, a_y0);
-            if (not should_continue) {
+            if (!(should_continue)) {
                 break;
             }
             current_t += t_h;
