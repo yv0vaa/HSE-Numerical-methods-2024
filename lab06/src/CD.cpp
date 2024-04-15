@@ -1,9 +1,8 @@
 #include "../include/CD.hpp"
-#include <cassert>
 #include <cmath>
 
 double CD::operator()(double M) const {
-    assert(M >= 0.4);
+    if (M < 0.4) return this->CD_val[0];
     if (M <= 2) {
         for (int i = 0; i + 1 < this->arr_size; i++) {
             double M_i = 0.4 + i * 0.05;
@@ -15,8 +14,5 @@ double CD::operator()(double M) const {
             }
         }
     }
-    if (M > 2) {
-        return this->a * pow(M, -b);
-    }
-    return -1.0; // should not be reached
+    return this->a * pow(M, -b);
 }

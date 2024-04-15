@@ -11,7 +11,7 @@ constexpr static double d = 0.216;
 constexpr static double pi = M_PI;
 constexpr static double g = 9.80655;   
 
-double *u_derivative(double *u) {
+double *u_derivative(const double *u) {
     Density density_instance;
     CD CD_instance;
 
@@ -28,11 +28,10 @@ double *u_derivative(double *u) {
 
     double Q = CD_instance(M) * density_instance(y) * (v * v / 2.0) * S;
 
-    static double derivative[4] = {
-        v_x,
-        -Q * (v_x / v) / m,
-        v_y,
-        -(Q * (v_y / v) / m) - g
-    };
+    double *derivative = new double[4];
+    derivative[0] = v_x;
+    derivative[1] = -Q * (v_x / v) / m;
+    derivative[2] = v_y;
+    derivative[3] = -(Q * (v_y / v) / m) - g;
     return derivative;
 }
