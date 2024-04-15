@@ -21,7 +21,8 @@ template <typename Stepper, typename Observer> class ODE_Integrator {
             if (!(should_continue)) {
                 break;
             }
-            current_t =step_result.first;
+            current_t = step_result.first;
+            integration_step = step_result.second;
         }
         for (int i = 0; i < Stepper::N; i++) {
             a_yEnd[i] = a_y0[i];
