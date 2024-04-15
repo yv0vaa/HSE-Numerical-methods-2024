@@ -35,15 +35,15 @@ template <typename RHS> class TimeStepper_RKF45 {
 
         std::pair<double, double> operator()(double a_t, double a_y[N], double h, double a_y_next[N]) {
             double k[6][N];
-            k[0][N] = this->m_rhs(a_t, a_y);
+            this->m_rhs->operator()(a_t, a_y, k[0]);
             for (int i = 1; i < 6; i++) {
                 double tmp_buffer[N];
                 for (int j = 0; j < i; j++) {
                     for (int l = 0; l < N; l++) {
-                        tmp_buffer = a_y[l] + h * beta[i][j] * k[j][l];
+                        tmp_buffer[i] = a_y[l] + h * beta[i][j] * k[j][l];
                     }
                 }
-                k[i][N] = this->rhs(a_t, tmp_buffer);
+                this->m_rhs->operator()(a_t, tmp_buffer, k[i]);
             }
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < N; j++) {
