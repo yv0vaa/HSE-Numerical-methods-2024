@@ -30,7 +30,7 @@ int main() {
         Observer observer_instance(ObserveMethod::CheckMaxRange);
         RHS rhs;
         TimeStepper_RKF45<RHS> stepper(&rhs);
-        ODE_Integrator<TimeStepper_RKF45<RHS>, Observer> integrator(&stepper, &observer_instance,h);
+        ODE_Integrator<TimeStepper_RKF45<RHS>, Observer> integrator(&stepper, &observer_instance, h);
         integrator(t_start, y, t_finish, y_end);
         std::cout << "For α = " << degrees << "° max range is " << y[0] << "m\n";
         if (best_range < y[0]) {

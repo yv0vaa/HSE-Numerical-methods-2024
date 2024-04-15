@@ -40,7 +40,7 @@ template <typename RHS> class TimeStepper_RKF45 {
                 double tmp_buffer[N];
                 for (int j = 0; j < i; j++) {
                     for (int l = 0; l < N; l++) {
-                        tmp_buffer[i] = a_y[l] + h * beta[i][j] * k[j][l];
+                        tmp_buffer[l] = a_y[l] + h * beta[i][j] * k[j][l];
                     }
                 }
                 this->m_rhs->operator()(a_t, tmp_buffer, k[i]);
