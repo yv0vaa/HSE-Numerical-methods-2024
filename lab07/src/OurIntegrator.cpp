@@ -6,7 +6,7 @@
 #include "../include/TimeStepper.hpp"
 #include "../include/ODEIntegrator.hpp"
 #include "../include/RHS.hpp"
-#include "../../lab06/include/u_derivative.hpp"
+
 
 constexpr static int N = 4;
 
