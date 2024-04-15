@@ -47,9 +47,12 @@ template <typename RHS> class TimeStepper_RKF45 {
             this->m_rhs->operator()(a_t, a_y, k[0]);
             for (int i = 1; i < 6; i++) {
                 double tmp_buffer[N];
+                for (int p = 0; p < N; p++) {
+                    tmp_buffer[p] = a_y[p];
+                }
                 for (int j = 0; j < i; j++) {
                     for (int l = 0; l < N; l++) {
-                        tmp_buffer[l] = a_y[l] + h * beta[i][j] * k[j][l];
+                        tmp_buffer[l] += h * beta[i][j] * k[j][l];
                     }
                 }
                 this->m_rhs->operator()(a_t, tmp_buffer, k[i]);
@@ -66,7 +69,7 @@ template <typename RHS> class TimeStepper_RKF45 {
             }
             double err = 0;
             for (int i = 0; i < N; i++) {
-                err = std::max(err, D[i]);
+                err = std::max(err, std::abs(D[i]));
             }
             if (err < m_epsilon) {
                 return {a_t + h, h};
