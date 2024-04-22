@@ -1,10 +1,15 @@
 #ifndef EVERHART_STEPPER_HPP
 #define EVERHART_STEPPER_HPP
 #include <vector>
+#include <cmath>
 
 template <typename RHS> class TimeStepperEverhart {
-    RHS const * m_rhs;
+public:
+    constexpr static int N = RHS::N;
+    constexpr static int k = 5;
+    double m_epsilon = 0.001;
 private:
+    RHS const * m_rhs;
     void initial_approx(std::vector<std::vector<double>> &F, double a_y[N], double a_y_dot[N], double a_t, double h) {
         m_rhs(a_t, a_y, a_y_dot, F[0]);
         for (int i = 1; i <= k; i++) {
@@ -17,7 +22,6 @@ private:
             m_rhs(a_t + t_diff, tmp_y, tmp_y_dot, F[i]);
         }
     }
-
     void compute_differences(std::vector<std::vector<std::vector<double>>> &F, double h) {
         double step = h / k;
         for (int order = 1; order <= k; order++) {
@@ -28,10 +32,8 @@ private:
             }
         }
     }
-
     void compute_Bi(std::vector<std::vector<std::vector<double>>> &F, std::vector<std::vector<double>> &B, double t0, double h) {
         B[5] = F[5][0];
-        // Precalculate powers of t0 and h
         double t02 = t0 * t0;
         double t03 = t02 * t0;
         double t04 = t03 * t0;
@@ -47,24 +49,56 @@ private:
             B[0][i] = F[0][0][i] - F[1][0][i] * t0 + F[2][0][i] * (t02 + 0.2 * t0 * h) - F[3][0][i] * (t03 + 0.6 * t02 * h + 0.08 * t0 * h2) + F[4][0][i] * (t04 + 1.2 * t03 * h + 0.44 * t02 * h2 + 0.048 * t0 * h3) - F[5][0][i] * (t05 + 2 * t04 * h + 1.4 * t03 * h2 + 0.4 * t02 * h3 + 0.0384 * t0 * h4) + B[1][i] * t0 - B[2][i] * t02 + B[3][i] * t03 - B[4][i] * t04 + B[5][i] * t05;
         }
     }
-
+    void compute_y(double a_y[N], double a_y_dot[N], double a_y_next[N], double tau,
+    const std::vector<std::vector<double>> &B) {
+        for (int i = 0; i < N; i++) {
+            a_y_next[i] = a_y[i] + a_y_dot[i] * tau;
+            for (int j = 0; j <= k; j++) {
+                a_y_next[i] += (B[j][i] * std::pow(tau, j + 2)) / ((j + 1) * (j + 2));
+            }
+        }
+    }
+    void compute_y_dot(double a_y_dot[N], double a_y_dot_next[N], double tau, 
+    const std::vector<std::vector<double>> &B) {
+        for (int i = 0; i < N; i++) {
+            a_y_dot_next[i] = a_y_dot[i];
+            for (int j = 0; j <= k; j++) {
+                a_y_dot_next[i] += (B[j][i] * std::pow(tau, j + 1)) / (j + 1);
+            }
+        }
+    } 
 public:
-    constexpr static int N = RHS::N;
-    constexpr static int k = 5; //later may be a parameter of the method (doubt)
-    double m_epsilon = 0.001;
-
     TimeStepperEverhart(RHS const * a_rhs, double a_epsilon) : m_rhs(a_rhs), m_epsilon(a_epsilon) {} ;
-
     std::pair<double, double> operator()(double a_t, double a_y[N], double a_y_dot[N], double h, double a_y_next[N], double a_y_next_dot[N]) {
         std::vector<std::vector<std::vector<double>>> F(k + 1);
-        // avoid extra reallocs of arrays
         for (int i = 0; i < F.size(); i++) { 
             F[i].resize(k - i + 1, std::vector<double>(N)); 
         }
         initial_approx(F[0], a_y, a_y_dot, a_t, h);
-        compute_differences(F, h);
-        std::vector<std::vector<double>> B(k + 1, std::vector<double>(N));
-        compute_Bi(F, B, a_t, h);
+        for (int i = 0; i < 1000 /*???*/; i++) {
+            compute_differences(F, h);
+            std::vector<std::vector<double>> B(k + 1, std::vector<double>(N));
+            compute_Bi(F, B, a_t, h);
+            std::vector<std::vector<double>> new_f(k + 1, std::vector<double>(N));
+            for (int j = 0; j <= k; j++) {
+                double step = (h * j) / k;
+                double y_next_tmp[N], y_dot_next_tmp[N];
+                compute_y(a_y, a_y_dot, y_next_tmp, step, B);
+                compute_y_dot(a_y_dot, y_dot_next_tmp, step, B);
+                m_rhs(a_t + step, y_next_tmp, y_dot_next_tmp, new_f[j]);
+            }
+            double err = 0;
+            for (int j = 0; j < N; j++) {
+                for (int l = 0; l <= k; l++) {
+                    err = std::max(err, std::abs(new_f[l][j] - F[0][l][j]));
+                }
+            }
+            if (err < m_epsilon) {
+                break;
+            }
+            F[0] = new_f;
+        }
+        return {a_t + h, h};
     }
 };
 
