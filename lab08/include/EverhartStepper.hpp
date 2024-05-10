@@ -4,14 +4,16 @@
 #include <cmath>
 
 template <typename RHS> class TimeStepperEverhart {
+private:
+    RHS const * m_rhs;
 public:
     constexpr static int N = RHS::N;
     constexpr static int k = 5;
-    double m_epsilon = 0.001;
+    double m_epsilon = 1e-12;
+    TimeStepperEverhart(RHS const * a_rhs, double a_epsilon) : m_rhs(a_rhs), m_epsilon(a_epsilon) {}
 private:
-    RHS const * m_rhs;
     void initial_approx(std::vector<std::vector<double>> &F, double a_y[N], double a_y_dot[N], double a_t, double h) {
-        m_rhs(a_t, a_y, a_y_dot, F[0]);
+        m_rhs->operator()(a_y, a_y_dot, F[0]);
         for (int i = 1; i <= k; i++) {
             std::vector<double> tmp_y_dot(N), tmp_y(N);
             double t_diff = h * i / k;
@@ -19,7 +21,7 @@ private:
                 tmp_y_dot[j] = a_y_dot[j] + F[0][j] * t_diff;
                 tmp_y[j] = a_y[j] + a_y_dot[j] * t_diff + F[0][j] * (t_diff * t_diff / 2);
             }
-            m_rhs(a_t + t_diff, tmp_y, tmp_y_dot, F[i]);
+            m_rhs->operator()(&tmp_y[0], &tmp_y_dot[0], F[i]);
         }
     }
     void compute_differences(std::vector<std::vector<std::vector<double>>> &F, double h) {
@@ -68,14 +70,15 @@ private:
         }
     } 
 public:
-    TimeStepperEverhart(RHS const * a_rhs, double a_epsilon) : m_rhs(a_rhs), m_epsilon(a_epsilon) {} ;
     std::pair<double, double> operator()(double a_t, double a_y[N], double a_y_dot[N], double h, double a_y_next[N], double a_y_next_dot[N]) {
         std::vector<std::vector<std::vector<double>>> F(k + 1);
         for (int i = 0; i < F.size(); i++) { 
             F[i].resize(k - i + 1, std::vector<double>(N)); 
         }
         initial_approx(F[0], a_y, a_y_dot, a_t, h);
-        for (int i = 0; i < 1000 /*???*/; i++) {
+        double num_err = 0, denum_err = 0;
+        do {
+            num_err = 0, denum_err = 0; 
             compute_differences(F, h);
             std::vector<std::vector<double>> B(k + 1, std::vector<double>(N));
             compute_Bi(F, B, a_t, h);
@@ -85,19 +88,17 @@ public:
                 double y_next_tmp[N], y_dot_next_tmp[N];
                 compute_y(a_y, a_y_dot, y_next_tmp, step, B);
                 compute_y_dot(a_y_dot, y_dot_next_tmp, step, B);
-                m_rhs(a_t + step, y_next_tmp, y_dot_next_tmp, new_f[j]);
+                m_rhs->operator()(y_next_tmp, y_dot_next_tmp, new_f[j]);
             }
-            double err = 0;
+            
             for (int j = 0; j < N; j++) {
                 for (int l = 0; l <= k; l++) {
-                    err = std::max(err, std::abs(new_f[l][j] - F[0][l][j]));
+                    num_err = std::max(num_err, std::abs(new_f[l][j] - F[0][l][j]));
+                    denum_err = std::max(denum_err, std::abs(F[0][l][j]));
                 }
             }
-            if (err < m_epsilon) {
-                break;
-            }
             F[0] = new_f;
-        }
+        } while (num_err / denum_err > m_epsilon); 
         return {a_t + h, h};
     }
 };
