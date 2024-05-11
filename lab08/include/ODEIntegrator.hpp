@@ -10,13 +10,16 @@ template <typename Stepper, typename Observer> class ODE_Integrator {
 
   public:
     ODE_Integrator(Stepper *a_stepper, Observer *a_observer, double a_step)
-        : m_stepper(a_stepper), m_observer(a_observer), integration_step(a_step){};
+        : m_stepper(a_stepper), m_observer(a_observer),
+          integration_step(a_step){};
 
-    void operator()(double a_t0, double a_y0[Stepper::N], double a_y0_dot[Stepper::N], double a_tEnd,
+    void operator()(double a_t0, double a_y0[Stepper::N],
+                    double a_y0_dot[Stepper::N], double a_tEnd,
                     double a_yEnd[Stepper::N], double a_yEnd_dot[Stepper::N]) {
         double current_t = a_t0;
         while (current_t < a_tEnd) {
-            std::pair<double, double> step_result = m_stepper->operator()(current_t, a_y0, a_y0_dot, integration_step, a_y0, a_y0_dot);
+            std::pair<double, double> step_result = m_stepper->operator()(
+                current_t, a_y0, a_y0_dot, integration_step, a_y0, a_y0_dot);
             bool should_continue = m_observer->operator()(current_t, a_y0);
             if (!(should_continue)) {
                 break;
@@ -31,4 +34,3 @@ template <typename Stepper, typename Observer> class ODE_Integrator {
 };
 
 #endif
-

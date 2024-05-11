@@ -6,7 +6,10 @@ SOURCES=$(shell ls src/*.cpp)
 all: test
 
 test: $(SOURCES) $(HEADERS) 
-	$(CXX) $(CXXFLAGS) $(SOURCES)  -o $@
+	$(CXX) $(CXXFLAGS) $(SOURCES) -o $@
+
+write:
+	./test > out.csv
 
 clean:
-	rm -f *.o test a.out
+	rm -f *.o test a.out out.csv
