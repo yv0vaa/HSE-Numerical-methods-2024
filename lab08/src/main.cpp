@@ -14,5 +14,5 @@ int main() {
     double r_dot[] = {std::sqrt(398600.4 / 7500), 0.0, 0.0};
     double r_end[3], r_end_dot[3];
     std::cout << "t,x,y,z\n";
-    integrator(0, r, r_dot, 100000, r_end, r_end_dot);
+    integrator(0, r, r_dot, 1000, r_end, r_end_dot);
 }

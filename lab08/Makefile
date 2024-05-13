@@ -1,5 +1,5 @@
 CXX=g++-12
-CXXFLAGS=-std=c++20
+CXXFLAGS=-std=c++20 
 HEADERS=$(shell ls include/*.hpp)
 SOURCES=$(shell ls src/*.cpp)
 

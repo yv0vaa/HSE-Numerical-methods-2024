@@ -6,7 +6,7 @@
 class RHS {
   public:
     constexpr static int N = 3;
-    void operator()(double a_y[N], double a_y_dot[N],
+    void operator()(double a_y[N], double a_y_dot[N], 
                     std::vector<double> &a_rhs) const;
 
   private:

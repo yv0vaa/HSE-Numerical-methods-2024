@@ -19,17 +19,17 @@ template <typename RHS> class TimeStepperEverhart {
 
   private:
     void initial_approx(std::vector<std::vector<double>> &F, double a_y[N],
-                        double a_y_dot[N], double a_t, double h) {
+                        double a_y_dot[N], double h) {
         m_rhs->operator()(a_y, a_y_dot, F[0]);
         for (int i = 1; i <= k; i++) {
-            std::vector<double> tmp_y_dot(N), tmp_y(N);
+            double tmp_y_dot[N], tmp_y[N];
             double t_diff = h * i / k;
             for (int j = 0; j < N; j++) {
                 tmp_y_dot[j] = a_y_dot[j] + F[0][j] * t_diff;
                 tmp_y[j] = a_y[j] + a_y_dot[j] * t_diff +
-                           F[0][j] * (t_diff * t_diff / 2);
+                           F[0][j] * t_diff * t_diff * 0.5;
             }
-            m_rhs->operator()(&tmp_y[0], &tmp_y_dot[0], F[i]);
+            m_rhs->operator()(tmp_y, tmp_y_dot, F[i]);
         }
     }
 
@@ -46,9 +46,25 @@ template <typename RHS> class TimeStepperEverhart {
             }
         }
     }
-
+     void compute_Bi(std::vector<std::vector<std::vector<double>>> &F, std::vector<std::vector<double>> &B, double t0, double h) {
+        B[5] = F[5][0];
+        double t02 = t0 * t0;
+        double t03 = t02 * t0;
+        double t04 = t03 * t0;
+        double t05 = t04 * t0;
+        double h2 = h * h;
+        double h3 = h2 * h;
+        double h4 = h3 * h;
+        for (int i = 0; i < N; i++) {
+            B[4][i] = F[4][0][i] - F[5][0][i] * (10 * t0 + 2 * h);
+            B[3][i] = F[3][0][i] - F[4][0][i] * (4 * t0 + 1.2 * h) + F[5][0][i] * (10 * t02 + 8 * t0 * h + 2.48 * h2) + 4 * B[4][i] * t0 - 10 * B[5][i] * t02;
+            B[2][i] = F[2][0][i] - F[3][0][i] * (3 * t0 + 0.6 * h) + F[4][0][i] * (6 * t02 + 0.36 * t0 * h + 0.44 * h2) - F[5][0][i] * (10 * t03 + 12 * t02 * h + 4.2 * t0 * h2 + 0.4 * h3) + 3 * B[3][i] * t0 - 6 * B[4][i] * t02 + 10 * B[5][i] * t03;
+            B[1][i] = F[1][0][i] - F[2][0][i] * (2 * t0 + 0.2 * h) + F[3][0][i] * (3 * t02 + 1.2 * t0 * h + 0.08 * h2) - F[4][0][i] * (4 * t03 + 3.6 * t02 * h + 0.88 * t0 * h2 + 0.048 * h3) + F[5][0][i] * (5 * t04 + 8 * t03 * h + 4.2 * t02 * h2 + 0.8 * t0 * h3 + 0.0384 * h4) + 2 * B[2][i] * t0 - 3 * B[3][i] * t02 + 4 * B[4][i] * t03 - 5 * B[5][i] * t04;
+            B[0][i] = F[0][0][i] - F[1][0][i] * t0 + F[2][0][i] * (t02 + 0.2 * t0 * h) - F[3][0][i] * (t03 + 0.6 * t02 * h + 0.08 * t0 * h2) + F[4][0][i] * (t04 + 1.2 * t03 * h + 0.44 * t02 * h2 + 0.048 * t0 * h3) - F[5][0][i] * (t05 + 2 * t04 * h + 1.4 * t03 * h2 + 0.4 * t02 * h3 + 0.0384 * t0 * h4) + B[1][i] * t0 - B[2][i] * t02 + B[3][i] * t03 - B[4][i] * t04 + B[5][i] * t05;
+        }
+     }
     void compute_Bi(const std::vector<std::vector<std::vector<double>>> &F,
-                    std::vector<std::vector<double>> &B, double t0, double h) {
+                    std::vector<std::vector<double>> &B, double h) {
         B[5] = F[5][0];
         B[0] = F[0][0];
         double delta[] = {h / 5, 2 * h / 5, 3 * h / 5, 4 * h / 5};
@@ -93,7 +109,6 @@ template <typename RHS> class TimeStepperEverhart {
             }
         }
     }
-
   public:
     std::pair<double, double> operator()(double a_t, double a_y[N],
                                          double a_y_dot[N], double h,
@@ -103,13 +118,12 @@ template <typename RHS> class TimeStepperEverhart {
         for (int i = 0; i < F.size(); i++) {
             F[i].resize(k - i + 1, std::vector<double>(N));
         }
-        initial_approx(F[0], a_y, a_y_dot, a_t, h);
-        double err = 0;
-        do {
-            err = 0;
+        initial_approx(F[0], a_y, a_y_dot, h);
+        std::vector<std::vector<double>> B(k + 1, std::vector<double>(N));
+        double diff = 1;
+        while (diff > m_epsilon) {
             compute_differences(F, h);
-            std::vector<std::vector<double>> B(k + 1, std::vector<double>(N));
-            compute_Bi(F, B, a_t, h);
+            compute_Bi(F, B, h, a_t);
             std::vector<std::vector<double>> new_f(k + 1,
                                                    std::vector<double>(N));
             for (int j = 0; j <= k; j++) {
@@ -119,15 +133,17 @@ template <typename RHS> class TimeStepperEverhart {
                 compute_y_dot(a_y_dot, y_dot_next_tmp, step, B);
                 m_rhs->operator()(y_next_tmp, y_dot_next_tmp, new_f[j]);
             }
-            compute_y(a_y, a_y_dot, a_y_next, h, B);
-            compute_y_dot(a_y_dot, a_y_next_dot, h, B);
+            diff = 0;
+            double tmp = 0;
             for (int j = 0; j < N; j++) {
-                for (int l = 0; l <= k; l++) {
-                    err = std::max(err, std::abs(new_f[l][j] - F[0][l][j]));
-                }
+                diff = std::max(diff, std::abs(new_f[5][j] - F[0][5][j]));
+                tmp = std::max(tmp, std::abs(F[0][5][j]));
             }
+            diff /= tmp;
             F[0] = new_f;
-        } while (err > m_epsilon);
+        }
+        compute_y(a_y, a_y_dot, a_y_next, h, B);
+        compute_y_dot(a_y_dot, a_y_next_dot, h, B);
         return {a_t + h, h};
     }
 };
