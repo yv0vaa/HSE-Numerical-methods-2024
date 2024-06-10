@@ -1,7 +1,7 @@
 #ifndef VOLATILITY_HPP
 #define VOLATILITY_HPP
 
-// Class denoted by the sigma variable in the lecture
+// Class denoted by the sigma variable in the lecture 
 class Volatility {
 private:
     // definition of sigma function that I made up

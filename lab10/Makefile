@@ -10,7 +10,7 @@ all: test
 # 	$(CXX) $(CXXFLAGS) $(SOURCES) -o $@
 
 analytical: $(SOURCES) $(HEADERS) solution_methods/analytical.cpp
-	$(CXX) $(CXXFLAGS) $(GSLFLAGS) solution_methods/analytical.cpp $(SOURCES) $(HEADERS) -o $@
+	$(CXX) $(CXXFLAGS) -o $@ solution_methods/analytical.cpp $(SOURCES)  $(GSLFLAGS)
 
 write:
 	./test > out.csv
