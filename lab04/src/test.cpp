@@ -4,12 +4,10 @@
 #include <numbers>
 #include "../include/Exp.hpp"
 
-double integrand(double x, void *params) {
+double integrand(double x, void *params) {  
     int N = *(int *)params;
-    double gx = std::exp(x);
-    double fx = Exp_FFT(static_cast<long double>(gx),
-                        static_cast<long double>(x), N, false);
-    return pow(fabs(fx - gx),  2);
+    double fx = Exp(static_cast<long double>(x), N, false);
+    return pow(fabs(fx),  2);
 }
 
 // Max N that works for me is 1200
