@@ -27,7 +27,7 @@ template <typename F> void test_value(F x) {
               << std::setprecision(PRECISION) << expected << "| "
               << std::setw(FORMAT3) << std::left << std::setprecision(PRECISION)
               << actual << "| " << std::setw(FORMAT4) << std::left
-              << std::setprecision(PRECISION) << delta << " (" << 
+              << std::setprecision(PRECISION) << delta << " ("
               << DBL_EPSILON << ")\n";
     MAX_DELTA = std::max(MAX_DELTA, static_cast<long double>(delta));
 }
