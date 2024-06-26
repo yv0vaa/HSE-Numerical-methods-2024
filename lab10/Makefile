@@ -12,5 +12,8 @@ all: analytical
 analytical: $(SOURCES) $(HEADERS) solution_methods/analytical.cpp
 	$(CXX) $(CXXFLAGS) -o $@ solution_methods/analytical.cpp $(SOURCES) $(GSLFLAGS)
 
+numerical: $(SOURCES) $(HEADERS) solution_methods/numerical.cpp
+	$(CXX) $(CXXFLAGS) -o $@ solution_methods/numerical.cpp $(SOURCES) $(GSLFLAGS)
+
 clean:
 	rm -f *.o test analytical
